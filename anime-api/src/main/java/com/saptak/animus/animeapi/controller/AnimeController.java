@@ -2,13 +2,16 @@ package com.saptak.animus.animeapi.controller;
 
 import com.saptak.animus.animeapi.entity.AnimeItem;
 import com.saptak.animus.animeapi.service.AnimeService;
-import org.apache.coyote.Response;
+import com.saptak.animus.animeapi.utils.AnimeItemResponse;
+import com.saptak.animus.animeapi.utils.ResponseStatusHandler;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -21,7 +24,20 @@ public class AnimeController {
     private MongoTemplate mongoTemplate;
     @GetMapping("/all")
     public ResponseEntity<Map<String,Object>> getAllAnimes() {
-        return  null;
+        //? Initialise wrapper storage
+        ArrayList<Map<String, Object>> parsedAllAnimes = new ArrayList<>();
+
+        //? Get All Animes
+        List<AnimeItem> allAnimes = animeservice.findAllAnimes();
+
+        //? Wrap all product items
+        allAnimes.forEach((animeItem -> {
+            Map<String, Object> parsedAnimeItem = AnimeItemResponse.parseAnimeItem(animeItem);
+            parsedAllAnimes.add(parsedAnimeItem);
+        }));
+
+        //? Return response
+        return ResponseStatusHandler.responseSuccessGetMany(parsedAllAnimes,Schema);
     }
     @GetMapping("/{name}")
     public ResponseEntity<Map<String,Object>> getAnimeByName(@PathVariable("name") String name) {
