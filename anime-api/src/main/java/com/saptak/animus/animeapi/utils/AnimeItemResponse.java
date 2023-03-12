@@ -1,7 +1,6 @@
 package com.saptak.animus.animeapi.utils;
 
 import com.saptak.animus.animeapi.entity.AnimeItem;
-
 import java.util.HashMap;
 import java.util.Map;
 

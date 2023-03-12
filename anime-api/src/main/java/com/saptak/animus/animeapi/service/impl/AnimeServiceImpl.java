@@ -1,12 +1,14 @@
 package com.saptak.animus.animeapi.service.impl;
 
+import com.mongodb.BasicDBObject;
+import com.mongodb.DBObject;
 import com.saptak.animus.animeapi.entity.AnimeItem;
 import com.saptak.animus.animeapi.repository.AnimeRepository;
 import com.saptak.animus.animeapi.service.AnimeService;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.mongodb.repository.Query;
 import org.springframework.stereotype.Service;
-
 import java.util.List;
 import java.util.Optional;
 
@@ -21,7 +23,7 @@ public class AnimeServiceImpl implements AnimeService {
 
     @Override
     public Optional<AnimeItem> findAnimeByName(String name) {
-        return Optional.empty();
+        return animeRepository.findByName(name);
     }
 
     @Override

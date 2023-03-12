@@ -1,5 +1,7 @@
 package com.saptak.animus.animeapi.controller;
 
+import com.mongodb.client.result.DeleteResult;
+import com.mongodb.client.result.UpdateResult;
 import com.saptak.animus.animeapi.entity.AnimeItem;
 import com.saptak.animus.animeapi.service.AnimeService;
 import com.saptak.animus.animeapi.utils.AnimeItemResponse;
@@ -7,12 +9,14 @@ import com.saptak.animus.animeapi.utils.ResponseStatusHandler;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @RestController
 @RequestMapping(value="/api/v1/anime")
@@ -39,24 +43,103 @@ public class AnimeController {
         //? Return response
         return ResponseStatusHandler.responseSuccessGetMany(parsedAllAnimes,Schema);
     }
-    @GetMapping("/{name}")
-    public ResponseEntity<Map<String,Object>> getAnimeByName(@PathVariable("name") String name) {
-        return  null;
+    @GetMapping("/by/{name}")
+    public ResponseEntity<Map<String,Object>> getAnimeByName(@RequestParam(value="name") String name) {
+        //? Find anime by name
+        Optional<AnimeItem> foundItem = animeservice.findAnimeByName(name);
+
+        //? Handle if not found
+        if(foundItem.isEmpty()) {
+            return ResponseStatusHandler.responseErrorNameNotFound(name, Schema);
+        }
+
+        //? Add wrapper function to parse anime entity
+        Map<String, Object> parsedAnimeItem = AnimeItemResponse.parseAnimeItem(foundItem.get());
+
+        //? Return Response
+        return  ResponseStatusHandler.responseSuccessGetNameOne(name, parsedAnimeItem,Schema);
     }
     @GetMapping("/{id}")
     public ResponseEntity<Map<String, Object>> getAnimeById(@PathVariable("id") ObjectId id) {
-        return null;
+        //? Find anime by id
+        Optional<AnimeItem> foundItem = animeservice.findAnimeById(id);
+
+        //? Handle if not found
+        if(foundItem.isEmpty()) {
+            return ResponseStatusHandler.responseErrorNotFound(id, Schema);
+        }
+
+        //? Add wrapper function to parse anime entity
+        Map<String, Object> parsedAnimeItem = AnimeItemResponse.parseAnimeItem(foundItem.get());
+
+        //? Return Response
+        return ResponseStatusHandler.responseSuccessGetOne(id, parsedAnimeItem, Schema);
     }
     @PostMapping("/add")
     public ResponseEntity<Map<String, Object>> addAnime(@RequestBody AnimeItem animeItem) {
-        return null;
+        //? Add anime item into db
+        Optional<AnimeItem> addedAnimeItem = animeservice.addAnime(animeItem);
+
+        //? Handle if not added
+        if(addedAnimeItem.isEmpty()) {
+            return ResponseStatusHandler.responseErrorInternal();
+        }
+
+        //? Add wrapper function to parse anime entity
+        Map<String, Object> parsedAnimeItem = AnimeItemResponse.parseAnimeItem(addedAnimeItem.get());
+
+        //? return response
+        return ResponseStatusHandler.responseSuccessAddOne(parsedAnimeItem,Schema);
     }
     @PutMapping("/update/{id}")
     public ResponseEntity<Map<String, Object>> updateAnimeById(@PathVariable("id") ObjectId id, @RequestBody AnimeItem animeItem) {
-        return null;
-    }
+        //? Check if anime item exists with the given id
+        Update updateFields = new Update();
 
+        //? Update the fields
+        updateFields.set("name", animeItem.name);
+        updateFields.set("description", animeItem.description);
+        updateFields.set("rating", animeItem.rating);
+        updateFields.set("link", animeItem.link);
+
+        //? Update Query
+        UpdateResult updateResult = mongoTemplate.update(AnimeItem.class)
+                .matching(Criteria.where("_id").is(id))
+                .apply(updateFields)
+                .first();
+
+        //! Error not found
+        if(updateResult.getMatchedCount() == 0) {
+            return ResponseStatusHandler.responseErrorNotFound(id,Schema);
+        }
+
+        //! Internal Server Error
+        if(updateResult.getMatchedCount() == 0) {
+            return ResponseStatusHandler.responseErrorInternal();
+        }
+
+        //? Set the id
+        animeItem.id = id;
+
+        //? Add wrapper function to parse entity
+        Map<String, Object> parsedAnimeItem = AnimeItemResponse.parseAnimeItem(animeItem);
+
+        //? Return response
+        return ResponseStatusHandler.responseSuccessUpdateOne(id, parsedAnimeItem,Schema);
+    }
+    @DeleteMapping("/delete/{id}")
     public ResponseEntity<Map<String, Object>> deleteAnimeById(@PathVariable("id") ObjectId id) {
-        return null;
+        //? Delete By Id
+        DeleteResult deleteResult = mongoTemplate.remove(AnimeItem.class)
+                .matching(Criteria.where("_id").is(id))
+                .one();
+
+        //! Error not found
+        if(deleteResult.getDeletedCount() == 0) {
+            return ResponseStatusHandler.responseErrorNotFound(id, Schema);
+        }
+
+        //? Return response
+        return ResponseStatusHandler.responseSuccessDelete(id, Schema);
     }
 }

@@ -20,6 +20,16 @@ public class ResponseStatusHandler {
     }
 
     //? status -> 200
+    public static ResponseEntity<Map<String, Object>> responseSuccessGetNameOne(String name, Map<String, Object> entity, String schema) {
+        Map<String, Object> response = new HashMap<>();
+        response.put("status", 200);
+        response.put("message",String.format("%s item found with name = %s", schema,name));
+        response.put("data",entity);
+
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    //? status -> 200
     public static ResponseEntity<Map<String, Object>> responseSuccessGetMany(ArrayList<Map<String, Object>> entityList, String schema) {
         Map<String, Object> response = new HashMap<>();
         response.put("status", 200);
@@ -63,6 +73,15 @@ public class ResponseStatusHandler {
         Map<String, Object> response = new HashMap<>();
         response.put("status", 404);
         response.put("message", String.format("%s item with id = %s not found!",schema,id.toString()));
+
+        return new ResponseEntity<>(response,HttpStatus.CREATED);
+    }
+
+    //? status -> 404
+    public static ResponseEntity<Map<String, Object>> responseErrorNameNotFound(String name, String schema) {
+        Map<String, Object> response = new HashMap<>();
+        response.put("status", 404);
+        response.put("message", String.format("%s item  with name = %s not found!",schema,name));
 
         return new ResponseEntity<>(response,HttpStatus.CREATED);
     }
