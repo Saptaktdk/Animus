@@ -1,8 +1,9 @@
 version: "3.1"
 services:
   api:
-    #? Set container name
+    #? Set container and image name
     container_name: animus_api
+    image: animus_api_image
 
     #? build image
     build:
@@ -30,7 +31,7 @@ services:
 
     #? Environment
     environment:
-      MONGO_INIT_ROOT_USERNAME : "animus_admin"
+      MONGO_INITDB_ROOT_USERNAME : "animus_admin"
       MONGO_INITDB_ROOT_PASSWORD : "testing123"
       MONGO_INITDB_DATABASE : "animus_db"
 

@@ -1,13 +1,10 @@
 package com.saptak.animus.service.impl;
 
-import com.mongodb.BasicDBObject;
-import com.mongodb.DBObject;
 import com.saptak.animus.entity.AnimeItem;
 import com.saptak.animus.repository.AnimeRepository;
 import com.saptak.animus.service.AnimeService;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.mongodb.repository.Query;
 import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;

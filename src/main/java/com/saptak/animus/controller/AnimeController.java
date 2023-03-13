@@ -43,7 +43,7 @@ public class AnimeController {
         //? Return response
         return ResponseStatusHandler.responseSuccessGetMany(parsedAllAnimes,Schema);
     }
-    @GetMapping("/by/{name}")
+    @GetMapping("/name")
     public ResponseEntity<Map<String,Object>> getAnimeByName(@RequestParam(value="name") String name) {
         //? Find anime by name
         Optional<AnimeItem> foundItem = animeservice.findAnimeByName(name);
