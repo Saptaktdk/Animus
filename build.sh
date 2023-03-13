@@ -17,6 +17,7 @@ else
   echo "Image found"
   make compose_dev_down_v2
   docker system prune -a --force
+  docker volume prune --force
 fi
 
 ##? Build and Run Docker
