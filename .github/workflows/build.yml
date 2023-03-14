@@ -32,3 +32,18 @@ jobs:
 
       - name: Build
         run: mvn -B package -DskipTests -DBUILD_NUMBER=${{ github.run_number }}
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v2
+        with:
+            username: ${{ secrets.DOCKERHUB_USERNAME }}
+            password: ${{ secrets.DOCKERHUB_PASSWORD }}
+
+      - name: Build and push to Dockerhub
+        uses: docker/build-push-action@v4
+        with:
+            context: .
+            file: Dockerfile
+            platforms: linux/amd64
+            push: true
+            tags: ${{ secrets.DOCKERHUB_PASSWORD }}/animus:1.0.${{ github.run_number }}
