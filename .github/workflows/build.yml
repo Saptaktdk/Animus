@@ -31,4 +31,4 @@ jobs:
         run: mvn -B clean -DskipTests -DBUILD_NUMBER=${{ github.run_number }}
 
       - name: Build
-        run: mvn -B package -Dskiptests -DBUILD_NUMBER=${{ github.run_number }}
+        run: mvn -B package -DskipTests -DBUILD_NUMBER=${{ github.run_number }}
