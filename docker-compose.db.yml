@@ -3,7 +3,7 @@ services:
   db:
     #? Set container name
     container_name: animus_db
-    image: mongo:latest
+    image: mongo:7.0.2
 
     #? Restart if down
     restart: always
