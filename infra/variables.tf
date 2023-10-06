@@ -57,6 +57,14 @@ variable "vpc_name" {
   type = string
 }
 
+variable "vpc_project_id" {
+  type = string
+}
+
+variable "vpc_subnet_name" {
+  type = string
+}
+
 variable "static_ip_name" {
   type = string
 }

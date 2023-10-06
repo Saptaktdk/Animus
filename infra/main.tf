@@ -13,6 +13,9 @@ module "compute_instance" {
   boot_disk_type          = var.boot_disk_type
   boot_disk_name          = var.boot_disk_name
   vpc_name                = var.vpc_name
+  vpc_project_id          = var.vpc_project_id
+  vpc_subnet_name         = var.vpc_subnet_name
+  vpc_region              = var.region
   static_ip_name          = var.static_ip_name
   metadata_startup_script = var.metadata_startup_script
 
