@@ -1,6 +1,6 @@
 #!/bin/bash
 
-VM_EXTERNAL_IP="35.238.14.183"
+VM_EXTERNAL_IP="34.28.16.52"
 RUNNER_PRIVATE_KEY_PATH=/home/saptak/.ssh/runner
 GITHUB_PRIVATE_KEY_PATH=/home/saptak/.ssh/github
 USER_NAME=runner
